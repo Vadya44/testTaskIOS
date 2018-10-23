@@ -19,9 +19,7 @@ class ViewController: UITableViewController {
     var products : [Product] = []
     let service = PHuntAPIService()
     
-    var container: UIView = UIView()
-    let activityView = UIActivityIndicatorView(style: .whiteLarge)
-    
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var selectedTitleLabel: UINavigationItem!
     
     var menuView: BTNavigationDropdownMenu!
@@ -31,23 +29,37 @@ class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
         self.tableView.dataSource = self
         self.tableView.delegate = self
         
-        self.selectedTitleLabel.title = topics.first
-        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.isTranslucent = false
+        
         
         
         menuView = BTNavigationDropdownMenu(navigationController: self.navigationController, containerView: self.navigationController!.view, title: BTTitle.title(topics.first!), items: topics)
         
         menuView.didSelectItemAtIndexHandler = {[weak self] (indexPath: Int) -> () in
-            self?.selectedTitleLabel.title = self?.topics[indexPath]
+            self!.selectedTitleLabel.title = self!.topics[indexPath]
         }
-        
+        menuView.cellHeight = 50
+        menuView.cellBackgroundColor = self.navigationController?.navigationBar.barTintColor
+        menuView.cellSelectionColor = UIColor(red: 0.0/255.0, green:160.0/255.0, blue:195.0/255.0, alpha: 1.0)
+        menuView.shouldKeepSelectedCellColor = true
+        menuView.cellTextLabelColor = UIColor.white
+        menuView.cellTextLabelFont = UIFont(name: "Avenir-Heavy", size: 17)
+        menuView.cellTextLabelAlignment = .left // .Center // .Right // .Left
+        menuView.arrowPadding = 15
+        menuView.animationDuration = 0.5
+        menuView.maskBackgroundColor = UIColor.black
+        menuView.maskBackgroundOpacity = 0.3
+    
         self.navigationItem.titleView = menuView
         
-        
-        getProducts()
+        if (self.products.isEmpty) {
+            getProducts()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -66,12 +78,15 @@ class ViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ProductTableViewCell
         let temp : Product = products[indexPath.row]
         
-        
-        
         cell.NameLabel.text = temp.getName()
         cell.VotesLabel.text = "\(temp.getVotes()) votes"
         cell.DescriptionLabel.text = temp.getDescription()
         cell.ThumbnailImage.image = temp.getThumbnail()
+        
+        if (self.activityIndicator.isAnimating && !products.isEmpty) {
+            self.activityIndicator.stopAnimating()
+        }
+        
         return cell
     }
     
@@ -84,22 +99,10 @@ class ViewController: UITableViewController {
     }
 
     func getProducts() {
-        container.frame = CGRect(x: 0, y: 0, width: 80, height: 80) // Set X and Y whatever you want
-        container.backgroundColor = .clear
+        activityIndicator.startAnimating()
         
-        activityView.center = self.view.center
-        activityView.startAnimating()
-        
-        
-        container.addSubview(activityView)
-        self.view.addSubview(container)
-        activityView.startAnimating()
-        
-        DispatchQueue.main.async {
-            self.service.printJson { (res) in
+        self.service.printJson { (res) in
             res.asObservable().subscribe({ (e) in
-                self.activityView.stopAnimating()
-                self.activityView.removeFromSuperview()
                 if (e.error != nil) {
                     let alertController = UIAlertController(title: "Unable to get data ", message: "Problems with API or Internet connection", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -109,15 +112,22 @@ class ViewController: UITableViewController {
                 }
                 else if (e.element != nil) {
                     self.products.append(e.element!)
-                    self.tableView.reloadData()
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                    
                 }
                 
             })
         }
-        }
+        
     }
     @IBAction func RefreshButtonPressed(_ sender: Any) {
-        getProducts()
+        if (!activityIndicator.isAnimating) {
+            products.removeAll()
+            self.tableView.reloadData()
+            getProducts()
+        }
     }
     
 }

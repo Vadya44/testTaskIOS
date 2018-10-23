@@ -26,7 +26,7 @@ class PHuntAPIService {
     
     func printJson(callback: @escaping (Observable<Product>) -> Void) {
         request(Constants.APIsURL, method : .get, encoding: JSONEncoding.default, headers: Constants.HTTPHeaders)
-            .responseJSON { response in
+            .responseJSON(queue: DispatchQueue.global(qos: .background)) { response in
                 switch response.result {
                 case .success(let value):
                     let seq = self.parseJSONtoBoard(value: value)
@@ -38,9 +38,11 @@ class PHuntAPIService {
     }
     
     func parseJSONtoBoard(value : Any) -> Observable<Product> {
+        
         let JSONDictionary = value as! Dictionary<String, Any>
         let JSON = JSONDictionary["posts"] as! NSArray
         var productsFromAPi : [Product] = []
+        
         for currentProduct in JSON {
             let productAsDictionary = currentProduct as! Dictionary<String, Any>
             
@@ -59,10 +61,10 @@ class PHuntAPIService {
             let parsedProduct = Product(name: productName, description: productTagline, votes: Int(truncating: productVotes), thumbnail: productImage!, redirURL: URL(string : productURL)!)
             
             productsFromAPi.append(parsedProduct)
-            
         }
         let seq = Observable<Product>.from(productsFromAPi)
         return seq
+        
     }
     
     

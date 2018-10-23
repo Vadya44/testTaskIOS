@@ -18,6 +18,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <activityIndicatorView key="tableFooterView" hidden="YES" opaque="NO" contentMode="center" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="6Aw-5n-wU1">
+                            <rect key="frame" x="0.0" y="190" width="375" height="20"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        </activityIndicatorView>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" rowHeight="162" id="jex-hW-yRe" customClass="ProductTableViewCell" customModule="testTask" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="162"/>
@@ -82,15 +86,16 @@
                             </tableViewCell>
                         </prototypes>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Title" id="hGU-9B-RFn">
-                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="eTf-DT-kvn">
+                    <navigationItem key="navigationItem" title="Title" id="Jgg-DF-1Rc">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="Q0D-PC-z7H">
                             <connections>
-                                <action selector="RefreshButtonPressed:" destination="BYZ-38-t0r" id="YDb-bi-ywD"/>
+                                <action selector="RefreshButtonPressed:" destination="BYZ-38-t0r" id="QQ9-OR-ums"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="selectedTitleLabel" destination="hGU-9B-RFn" id="JjF-ac-Paw"/>
+                        <outlet property="activityIndicator" destination="6Aw-5n-wU1" id="L8h-Sh-vzI"/>
+                        <outlet property="selectedTitleLabel" destination="Jgg-DF-1Rc" id="gcW-YW-zJj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
