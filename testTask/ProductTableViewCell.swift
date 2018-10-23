@@ -9,7 +9,12 @@
 import UIKit
 
 class ProductTableViewCell: UITableViewCell {
-
+    
+    @IBOutlet weak var NameLabel: UILabel!
+    @IBOutlet weak var VotesLabel: UILabel!
+    @IBOutlet weak var DescriptionLabel: UILabel!
+    @IBOutlet weak var ThumbnailImage: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
