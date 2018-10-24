@@ -7,11 +7,6 @@
 //
 
 import UIKit
-import SwiftyJSON
-import RxSwift
-import RxCocoa
-import Alamofire
-import RxAlamofire
 import BTNavigationDropdownMenu
 
 class ViewController: UITableViewController {
@@ -38,19 +33,17 @@ class ViewController: UITableViewController {
         
         
         
-        menuView = BTNavigationDropdownMenu(navigationController: self.navigationController, containerView: self.navigationController!.view, title: BTTitle.title(topics.first!), items: topics)
+        menuView = BTNavigationDropdownMenu(navigationController: self.navigationController, containerView: self.navigationController!.view, title: BTTitle.title("\(topics.first!)↓"), items: topics)
         
         menuView.didSelectItemAtIndexHandler = {[weak self] (indexPath: Int) -> () in
-            self!.selectedTitleLabel.title = self!.topics[indexPath]
+            self!.selectedTitleLabel.title = "\(self!.topics[indexPath])↓"
         }
-        menuView.cellHeight = 50
         menuView.cellBackgroundColor = self.navigationController?.navigationBar.barTintColor
         menuView.cellSelectionColor = UIColor(red: 0.0/255.0, green:160.0/255.0, blue:195.0/255.0, alpha: 1.0)
         menuView.shouldKeepSelectedCellColor = true
         menuView.cellTextLabelColor = UIColor.white
         menuView.cellTextLabelFont = UIFont(name: "Avenir-Heavy", size: 17)
-        menuView.cellTextLabelAlignment = .left // .Center // .Right // .Left
-        menuView.arrowPadding = 15
+        menuView.cellTextLabelAlignment = .center
         menuView.animationDuration = 0.5
         menuView.maskBackgroundColor = UIColor.black
         menuView.maskBackgroundOpacity = 0.3
@@ -128,6 +121,13 @@ class ViewController: UITableViewController {
             self.tableView.reloadData()
             getProducts()
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let allControllers = NSMutableArray(array: navigationController!.viewControllers)
+        allControllers.removeObject(at: allControllers.count - 2)
+        self.navigationController!.setViewControllers(allControllers as [AnyObject] as! [UIViewController], animated: false)
     }
     
 }

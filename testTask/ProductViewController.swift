@@ -19,11 +19,19 @@ class ProductViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navBar.title = product?.getName()
         productTitleLabel.text = product?.getName()
         productVotesLabel.text = String("\(product?.getVotes() ?? 0) votes")
         productDescriptionLabel.text = product?.getDescription()
         productThumbnailImageView.image = product?.getThumbnail()
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let allControllers = NSMutableArray(array: navigationController!.viewControllers)
+        allControllers.removeObject(at: allControllers.count - 2)
+        self.navigationController!.setViewControllers(allControllers as [AnyObject] as! [UIViewController], animated: false)
     }
     
     @IBAction func openWebClicked(_ sender: Any) {
