@@ -14,6 +14,8 @@ class ViewController: UITableViewController {
     var products : [Product] = []
     let service = PHuntAPIService()
     
+    var tempCategory : Category = Category(name : "tech")
+    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var selectedTitleLabel: UINavigationItem!
     
@@ -21,6 +23,8 @@ class ViewController: UITableViewController {
     
     let topics = ["tech", "books", "google", "marketing", "snapchat", "photography", "payment", "design tools",
                   "developer tools", "social-media tools", "music", "hardware", "batteries"]
+    
+    var categories = [Category]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,12 +35,16 @@ class ViewController: UITableViewController {
         
         self.navigationController?.navigationBar.isTranslucent = false
         
-        
+        topics.forEach { topic in
+            categories.append(Category(name : topic))
+        }
         
         menuView = BTNavigationDropdownMenu(navigationController: self.navigationController, containerView: self.navigationController!.view, title: BTTitle.title("\(topics.first!)↓"), items: topics)
         
         menuView.didSelectItemAtIndexHandler = {[weak self] (indexPath: Int) -> () in
             self!.selectedTitleLabel.title = "\(self!.topics[indexPath])↓"
+            self!.tempCategory = self!.categories[indexPath]
+            self!.getProducts()
         }
         menuView.cellBackgroundColor = self.navigationController?.navigationBar.barTintColor
         menuView.cellSelectionColor = UIColor(red: 0.0/255.0, green:160.0/255.0, blue:195.0/255.0, alpha: 0.3)
@@ -50,9 +58,6 @@ class ViewController: UITableViewController {
     
         self.navigationItem.titleView = menuView
         
-        if (self.products.isEmpty) {
-            getProducts()
-        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -91,9 +96,14 @@ class ViewController: UITableViewController {
     }
 
     func getProducts() {
+        self.menuView.isUserInteractionEnabled = false
+        if (!activityIndicator.isAnimating) {
+            products.removeAll()
+            self.tableView.reloadData()
+        }
         activityIndicator.startAnimating()
         
-        self.service.printJson { (res) in
+        self.service.printJson (category : tempCategory) { (res) in
             res.asObservable().subscribe({ (e) in
                 if (e.error != nil) {
                     let alertController = UIAlertController(title: "Unable to get data ", message: "Problems with API or Internet connection", preferredStyle: .alert)
@@ -106,6 +116,7 @@ class ViewController: UITableViewController {
                     self.products.append(e.element!)
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
+                        self.menuView.isUserInteractionEnabled = true
                     }
                     
                 }
@@ -115,11 +126,7 @@ class ViewController: UITableViewController {
         
     }
     @IBAction func RefreshButtonPressed(_ sender: Any) {
-        if (!activityIndicator.isAnimating) {
-            products.removeAll()
-            self.tableView.reloadData()
             getProducts()
-        }
     }
     
 }

@@ -22,11 +22,10 @@ class PHuntAPIService {
     // struct for constants - headers and api's url
     private struct Constants {
         static let HTTPHeaders = ["Authorization" : "Bearer 591f99547f569b05ba7d8777e2e0824eea16c440292cce1f8dfb3952cc9937ff"]
-        static let APIsURL = "https://api.producthunt.com/v1/posts"
     }
     
-    func printJson(callback: @escaping (Observable<Product>) -> Void) {
-        request(Constants.APIsURL, method : .get, encoding: JSONEncoding.default, headers: Constants.HTTPHeaders)
+    func printJson(category : Category, callback: @escaping (Observable<Product>) -> Void) {
+        request(category.getURL() , method : .get, encoding: JSONEncoding.default, headers: Constants.HTTPHeaders)
             .responseJSON(queue: DispatchQueue.global(qos: .background)) { response in
                 switch response.result {
                 case .success(let value):
