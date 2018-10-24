@@ -38,6 +38,10 @@ class ProductViewController: UIViewController {
         UIApplication.shared.openURL((product?.getRedirURL())!)
     }
     
+    deinit {
+        print("removed")
+    }
+    
     
     /*
     // MARK: - Navigation

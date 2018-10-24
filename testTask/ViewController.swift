@@ -39,7 +39,7 @@ class ViewController: UITableViewController {
             self!.selectedTitleLabel.title = "\(self!.topics[indexPath])↓"
         }
         menuView.cellBackgroundColor = self.navigationController?.navigationBar.barTintColor
-        menuView.cellSelectionColor = UIColor(red: 0.0/255.0, green:160.0/255.0, blue:195.0/255.0, alpha: 1.0)
+        menuView.cellSelectionColor = UIColor(red: 0.0/255.0, green:160.0/255.0, blue:195.0/255.0, alpha: 0.3)
         menuView.shouldKeepSelectedCellColor = true
         menuView.cellTextLabelColor = UIColor.white
         menuView.cellTextLabelFont = UIFont(name: "Avenir-Heavy", size: 17)
@@ -87,7 +87,6 @@ class ViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let prodVC = storyboard?.instantiateViewController(withIdentifier: "productVC") as! ProductViewController
         prodVC.product = products[indexPath.row]
-        
         navigationController?.pushViewController(prodVC, animated: true)
     }
 
@@ -121,13 +120,6 @@ class ViewController: UITableViewController {
             self.tableView.reloadData()
             getProducts()
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        let allControllers = NSMutableArray(array: navigationController!.viewControllers)
-        allControllers.removeObject(at: allControllers.count - 2)
-        self.navigationController!.setViewControllers(allControllers as [AnyObject] as! [UIViewController], animated: false)
     }
     
 }
